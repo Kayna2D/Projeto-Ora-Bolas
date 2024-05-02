@@ -94,6 +94,10 @@ def criar_arquivos(robo, bola, tempo):
   aceleracoes.write("%.2f//%.2f//%.2f\n" %(tempo, robo['acc_x'], robo['acc_y']))
   aceleracoes.close()
 
+  distancia = open("distancia.txt", "a")
+  distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
+  distancia.close()
+
 robo_xi_max = int(2 * 100)
 robo_xi_min = 0
 
