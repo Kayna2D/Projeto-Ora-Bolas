@@ -70,16 +70,29 @@ def interceptar(robo, bola, tempo):
   robo['x'] += robo['vel_x']
   robo['y'] += robo['vel_y']
 
+  criar_arquivos(robo, tempo)
+
   if (bola['distancia'] <= robo['raio']):
     print("Bola interceptada")
     print("Em: %.2fs" %tempo)
+    print("Distancia: %.2f" %bola['distancia'])
     robo['interceptado'] = True
     return robo
   else:
     return robo
     
+def criar_arquivos(robo, tempo):
+  posicao = open("posicao.txt", "a")
+  posicao.write("%.2f//%.2f//%.2f\n" %(tempo, robo['x'], robo['y']))
+  posicao.close()
 
-  return 0
+  velocidades = open("velocidades.txt", "a")
+  velocidades.write("%.2f//%.2f//%.2f\n" %(tempo, robo['vel_x'], robo['vel_y']))
+  velocidades.close()
+
+  aceleracoes = open("aceleracoes.txt", "a")
+  aceleracoes.write("%.2f//%.2f//%.2f\n" %(tempo, robo['acc_x'], robo['acc_y']))
+  aceleracoes.close()
 
 robo_xi_max = int(2 * 100)
 robo_xi_min = 0
