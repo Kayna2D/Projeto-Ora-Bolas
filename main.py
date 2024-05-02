@@ -72,7 +72,7 @@ def interceptar(robo, bola, tempo):
 
   if (bola['distancia'] <= robo['raio']):
     print("Bola interceptada")
-    print("Em: %.2fs", tempo)
+    print("Em: %.2fs" %tempo)
     robo['interceptado'] = True
     return robo
   else:
