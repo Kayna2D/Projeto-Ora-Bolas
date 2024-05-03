@@ -1,5 +1,9 @@
 from math import *
 from random import *
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use('TkAgg')
+import os
 
 def interceptar(robo, bola, tempo):
 
@@ -98,6 +102,149 @@ def criar_arquivos(robo, bola, tempo):
   distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
   distancia.close()
 
+def limpar_arquivos():
+  posicao = open("posicao.txt", "w")
+  posicao.close()
+
+  velocidades = open("velocidades.txt", "w")
+  velocidades.close()
+
+  aceleracoes = open("aceleracoes.txt", "w")
+  aceleracoes.close()
+
+  distancia = open("distancia.txt", "w")
+  distancia.close()
+
+# Gráficos
+def grafico_trajetoria():
+  posicao = open("posicao.txt", "r")
+  x_robo = []
+  y_robo = []
+  x_bola = []
+  y_bola = []
+  for linha in posicao:
+    valores = linha.split("//")
+    x_robo.append(float(valores[1]))
+    y_robo.append(float(valores[2]))
+    x_bola.append(float(valores[3]))
+    y_bola.append(float(valores[4]))
+  plt.plot(x_robo, y_robo)
+  plt.plot(x_bola, y_bola)
+  
+  plt.title("Gráfico das trajetórias da bola e do robo até a interceptação")
+  plt.xlabel("X (m)")
+  plt.ylabel("Y (m)")
+  plt.legend(["Robô", "Bola"])
+
+  plt.savefig("grafico_trajetoria.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_posicao_x():
+  posicao = open("posicao.txt", "r")
+  tempo = []
+  x_robo = []
+
+  for linha in posicao:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    x_robo.append(float(valores[1]))
+
+  plt.plot(tempo, x_robo)
+
+  plt.title("Gráfico da posição x do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("X (m)")
+  plt.legend(["Robô"])
+
+  plt.savefig("grafico_posicao_x.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_posicao_y():
+  posicao = open("posicao.txt", "r")
+  tempo = []
+  y_robo = []
+
+  for linha in posicao:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    y_robo.append(float(valores[2]))
+
+  plt.plot(tempo, y_robo)
+
+  plt.title("Gráfico da posição y do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Y (m)")
+  plt.legend(["Robô"])
+
+  plt.savefig("grafico_posicao_y.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_velocidade():
+  velocidades = open("velocidades.txt", "r")
+  tempo = []
+  vx_robo = []
+  vy_robo = []
+
+  for linha in velocidades:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    vx_robo.append(float(valores[1]))
+    vy_robo.append(float(valores[2]))
+
+  plt.plot(tempo, vx_robo)
+  plt.plot(tempo, vy_robo)
+
+  plt.title("Gráfico das velocidades do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Velocidade (m/s)")
+
+  plt.savefig("grafico_velocidade.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_aceleracao():
+  aceleracoes = open("aceleracoes.txt", "r")
+
+  tempo = []
+  ax_robo = []
+  ay_robo = []
+
+  for linha in aceleracoes:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    ax_robo.append(float(valores[1]))
+    ay_robo.append(float(valores[2]))
+
+  plt.plot(tempo, ax_robo)
+  plt.plot(tempo, ay_robo)
+
+  plt.title("Gráfico das acelerações do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Aceleração (m/s²)")
+
+  plt.savefig("grafico_aceleracao.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_distancia():
+  distancia = open("distancia.txt", "r")
+  tempo = []
+  dist = []
+
+  for linha in distancia:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    dist.append(float(valores[1]))
+
+  plt.plot(tempo, dist)
+
+  plt.title("Gráfico da distância relativa do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Distância (m)")
+
+  plt.savefig("grafico_distancia.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+limpar_arquivos()
+
 robo_xi_max = int(2 * 100)
 robo_xi_min = 0
 
@@ -172,3 +319,10 @@ for i in range(len(dados_bola)):
     break
   else:
     pass
+
+grafico_trajetoria()
+grafico_posicao_x()
+grafico_posicao_y()
+grafico_velocidade()
+grafico_aceleracao()
+grafico_distancia()
