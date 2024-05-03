@@ -179,6 +179,27 @@ def grafico_posicao_y():
   plt.savefig("grafico_posicao_y.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
 
+def grafico_velocidade():
+  velocidades = open("velocidades.txt", "r")
+  tempo = []
+  vx_robo = []
+  vy_robo = []
+
+  for linha in velocidades:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    vx_robo.append(float(valores[1]))
+    vy_robo.append(float(valores[2]))
+
+  plt.plot(tempo, vx_robo)
+  plt.plot(tempo, vy_robo)
+
+  plt.title("Gráfico das velocidades do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Velocidade (m/s)")
+
+  plt.savefig("grafico_velocidade.png", bbox_inches='tight', pad_inches=0, dpi=300)
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -259,3 +280,4 @@ for i in range(len(dados_bola)):
 grafico_trajetoria()
 grafico_posicao_x()
 grafico_posicao_y()
+grafico_velocidade()
