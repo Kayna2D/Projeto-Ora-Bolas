@@ -115,6 +115,7 @@ def limpar_arquivos():
   distancia = open("distancia.txt", "w")
   distancia.close()
 
+# Gráficos
 def grafico_trajetoria():
   posicao = open("posicao.txt", "r")
   x_robo = []
@@ -136,6 +137,47 @@ def grafico_trajetoria():
   plt.legend(["Robô", "Bola"])
 
   plt.savefig("grafico_trajetoria.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_posicao_x():
+  posicao = open("posicao.txt", "r")
+  tempo = []
+  x_robo = []
+
+  for linha in posicao:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    x_robo.append(float(valores[1]))
+
+  plt.plot(tempo, x_robo)
+
+  plt.title("Gráfico da posição x do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("X (m)")
+  plt.legend(["Robô"])
+
+  plt.savefig("grafico_posicao_x.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_posicao_y():
+  posicao = open("posicao.txt", "r")
+  tempo = []
+  y_robo = []
+
+  for linha in posicao:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    y_robo.append(float(valores[2]))
+
+  plt.plot(tempo, y_robo)
+
+  plt.title("Gráfico da posição y do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Y (m)")
+  plt.legend(["Robô"])
+
+  plt.savefig("grafico_posicao_y.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
 
 limpar_arquivos()
 
@@ -215,3 +257,5 @@ for i in range(len(dados_bola)):
     pass
 
 grafico_trajetoria()
+grafico_posicao_x()
+grafico_posicao_y()
