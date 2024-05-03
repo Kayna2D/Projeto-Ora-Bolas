@@ -199,6 +199,30 @@ def grafico_velocidade():
   plt.ylabel("Velocidade (m/s)")
 
   plt.savefig("grafico_velocidade.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+def grafico_aceleracao():
+  aceleracoes = open("aceleracoes.txt", "r")
+
+  tempo = []
+  ax_robo = []
+  ay_robo = []
+
+  for linha in aceleracoes:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    ax_robo.append(float(valores[1]))
+    ay_robo.append(float(valores[2]))
+
+  plt.plot(tempo, ax_robo)
+  plt.plot(tempo, ay_robo)
+
+  plt.title("Gráfico das acelerações do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Aceleração (m/s²)")
+
+  plt.savefig("grafico_aceleracao.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
 
 limpar_arquivos()
 
@@ -281,3 +305,4 @@ grafico_trajetoria()
 grafico_posicao_x()
 grafico_posicao_y()
 grafico_velocidade()
+grafico_aceleracao()
