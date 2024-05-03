@@ -224,6 +224,25 @@ def grafico_aceleracao():
   plt.savefig("grafico_aceleracao.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
 
+def grafico_distancia():
+  distancia = open("distancia.txt", "r")
+  tempo = []
+  dist = []
+
+  for linha in distancia:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    dist.append(float(valores[1]))
+
+  plt.plot(tempo, dist)
+
+  plt.title("Gráfico da distância relativa do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Distância (m)")
+
+  plt.savefig("grafico_distancia.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -306,3 +325,4 @@ grafico_posicao_x()
 grafico_posicao_y()
 grafico_velocidade()
 grafico_aceleracao()
+grafico_distancia()
