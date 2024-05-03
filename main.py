@@ -1,5 +1,9 @@
 from math import *
 from random import *
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use('TkAgg')
+import os
 
 def interceptar(robo, bola, tempo):
 
@@ -98,6 +102,43 @@ def criar_arquivos(robo, bola, tempo):
   distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
   distancia.close()
 
+def limpar_arquivos():
+  posicao = open("posicao.txt", "w")
+  posicao.close()
+
+  velocidades = open("velocidades.txt", "w")
+  velocidades.close()
+
+  aceleracoes = open("aceleracoes.txt", "w")
+  aceleracoes.close()
+
+  distancia = open("distancia.txt", "w")
+  distancia.close()
+
+def grafico_trajetoria():
+  posicao = open("posicao.txt", "r")
+  x_robo = []
+  y_robo = []
+  x_bola = []
+  y_bola = []
+  for linha in posicao:
+    valores = linha.split("//")
+    x_robo.append(float(valores[1]))
+    y_robo.append(float(valores[2]))
+    x_bola.append(float(valores[3]))
+    y_bola.append(float(valores[4]))
+  plt.plot(x_robo, y_robo)
+  plt.plot(x_bola, y_bola)
+  
+  plt.title("Gráfico das trajetórias da bola e do robo até a interceptação")
+  plt.xlabel("X (m)")
+  plt.ylabel("Y (m)")
+  plt.legend(["Robô", "Bola"])
+
+  plt.savefig("grafico_trajetoria.png", bbox_inches='tight', pad_inches=0, dpi=300)
+
+limpar_arquivos()
+
 robo_xi_max = int(2 * 100)
 robo_xi_min = 0
 
@@ -172,3 +213,5 @@ for i in range(len(dados_bola)):
     break
   else:
     pass
+
+grafico_trajetoria()
