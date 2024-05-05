@@ -3,7 +3,7 @@ from random import *
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
-import os
+import json
 
 def interceptar(robo, bola, tempo):
 
@@ -101,6 +101,47 @@ def criar_arquivos(robo, bola, tempo):
   distancia = open("distancia.txt", "a")
   distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
   distancia.close()
+
+
+def velocidade_bola(tempo_total):
+  print(tempo_total)
+  dados_bola = []
+
+  dados_a = []
+
+  trajetoria_bola = open("trajetoria_bola.txt", "r")
+
+  for linha in trajetoria_bola.readlines():
+    dados_a.append(linha.strip().split('//'))
+    dados_bola.append({
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
+    })
+  trajetoria_bola.close()
+
+  velocidade_bola = open("velocidade_bola.txt", "w")
+  for linha in range(len(dados_bola)): 
+    tempo = float(dados_bola[linha]['t'])
+    xi = float(dados_bola[linha]['x'])
+    yi = float(dados_bola[linha]['y'])
+
+    xf = float(dados_bola[linha + 1]['x'])
+    yf = float(dados_bola[linha + 1]['y'])
+
+    delta_x = xf - xi
+    delta_y = yf - yi
+
+    velocidade_bola_x = delta_x / 0.2
+    velocidade_bola_y = delta_y / 0.2
+
+    velocidade_bola.write("%.2f//%.2f//%.2f\n" %(tempo, velocidade_bola_x, velocidade_bola_y))
+
+    if (tempo == tempo_total):
+      break
+
+
+  velocidade_bola.close()
 
 def limpar_arquivos():
   posicao = open("posicao.txt", "w")
@@ -309,16 +350,21 @@ trajetoria_bola.close()
     'y': dados_a[i][2],
   } """
 
+
 for i in range(len(dados_bola)):
   tempo = float(dados_bola[i]['t'])
   bola['x'] = float(dados_bola[i]['x'])
   bola['y'] = float(dados_bola[i]['y'])
   robo = interceptar(robo, bola, tempo)
 
-  if robo['interceptado']  == True:
+  if robo['interceptado'] == True:
+    velocidade_bola(tempo)
     break
   else:
     pass
+
+
+
 
 grafico_trajetoria()
 grafico_posicao_x()
