@@ -3,7 +3,7 @@ from random import *
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
-import os
+import json
 
 def interceptar(robo, bola, tempo):
 
@@ -102,6 +102,84 @@ def criar_arquivos(robo, bola, tempo):
   distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
   distancia.close()
 
+
+def velocidade_bola(tempo_total):
+  dados_bola = []
+
+  dados_a = []
+
+  trajetoria_bola = open("trajetoria_bola.txt", "r")
+
+  for linha in trajetoria_bola.readlines():
+    dados_a.append(linha.strip().split('//'))
+    dados_bola.append({
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
+    })
+  trajetoria_bola.close()
+
+  velocidade_bola = open("velocidade_bola.txt", "w")
+  for linha in range(len(dados_bola)): 
+    tempo = float(dados_bola[linha]['t'])
+    xi = float(dados_bola[linha]['x'])
+    yi = float(dados_bola[linha]['y'])
+
+    xf = float(dados_bola[linha + 1]['x'])
+    yf = float(dados_bola[linha + 1]['y'])
+
+    delta_x = float(xf - xi)
+    delta_y = float(yf - yi)
+
+    velocidade_bola_x = delta_x / 0.2
+    velocidade_bola_y = delta_y / 0.2
+
+    velocidade_bola.write("%.2f//%.2f//%.2f\n" %(tempo, velocidade_bola_x, velocidade_bola_y))
+
+    if (tempo == tempo_total):
+      break
+
+
+  velocidade_bola.close()
+
+def aceleracao_bola(tempo_total):
+  dados_bola = []
+
+  dados_a = []
+
+  velocidade_bola = open("velocidade_bola.txt", "r")
+
+  for linha in velocidade_bola.readlines():
+    dados_a.append(linha.strip().split('//'))
+    dados_bola.append({
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
+    })
+  velocidade_bola.close()
+
+  aceleracao_bola = open("aceleracao_bola.txt", "w")
+  for linha in range(len(dados_bola) -1): 
+    tempo = float(dados_bola[linha]['t'])
+    xi = float(dados_bola[linha]['x'])
+    yi = float(dados_bola[linha]['y'])
+
+    xf = float(dados_bola[linha + 1]['x'])
+    yf = float(dados_bola[linha + 1]['y'])
+
+    delta_x = xf - xi
+    delta_y = yf - yi
+
+    aceleracao_bola_x = delta_x / 0.2
+    aceleracao_bola_y = delta_y / 0.2
+
+    aceleracao_bola.write("%.2f//%.2f//%.2f\n" %(tempo, aceleracao_bola_x, aceleracao_bola_y))
+
+    if (tempo == tempo_total):
+      break
+  
+  aceleracao_bola.close()
+
 def limpar_arquivos():
   posicao = open("posicao.txt", "w")
   posicao.close()
@@ -197,8 +275,37 @@ def grafico_velocidade():
   plt.title("Gráfico das velocidades do robô em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("Velocidade (m/s)")
+  plt.legend(["Vx", "Vy"])
 
   plt.savefig("grafico_velocidade.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+  velocidades.close()
+
+def grafico_velocidade_bola():
+  velocidade_bola = open("velocidade_bola.txt", "r")
+  tempo = []
+  vx_bola = []
+  vy_bola = []
+
+  for linha in velocidade_bola:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    vx_bola.append(float(valores[1]))
+    vy_bola.append(float(valores[2]))
+
+  plt.plot(tempo, vx_bola)
+  plt.plot(tempo, vy_bola)
+
+  plt.title("Gráfico das velocidades da bola em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Velocidade (m/s)")
+  plt.legend(["Vx", "Vy"])
+
+  plt.savefig("grafico_velocidade_bola.png", bbox_inches='tight', pad_inches=0, dpi=300)
+
+  velocidade_bola.close()
+
   plt.close()
 
 def grafico_aceleracao():
@@ -220,8 +327,38 @@ def grafico_aceleracao():
   plt.title("Gráfico das acelerações do robô em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("Aceleração (m/s²)")
+  plt.legend(["Ax", "Ay"])
 
   plt.savefig("grafico_aceleracao.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+  aceleracoes.close()
+
+def grafico_aceleracao_bola():
+  aceleracao_bola = open("aceleracao_bola.txt", "r")
+
+  tempo = []
+  ax_bola = []
+  ay_bola = []
+
+  for linha in aceleracao_bola:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    ax_bola.append(float(valores[1]))
+    ay_bola.append(float(valores[2]))
+
+  plt.plot(tempo, ax_bola)
+  plt.plot(tempo, ay_bola)
+
+  plt.title("Gráfico das acelerações da bola em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Aceleração (m/s²)")
+  plt.legend(["Ax", "Ay"])
+
+  plt.savefig("grafico_aceleracao_bola.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  
+  aceleracao_bola.close()
+
   plt.close()
 
 def grafico_distancia():
@@ -236,9 +373,10 @@ def grafico_distancia():
 
   plt.plot(tempo, dist)
 
-  plt.title("Gráfico da distância relativa do robô em função do tempo")
+  plt.title("Gráfico da distância relativa entre o robô e a bola em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("Distância (m)")
+
 
   plt.savefig("grafico_distancia.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
@@ -309,20 +447,28 @@ trajetoria_bola.close()
     'y': dados_a[i][2],
   } """
 
+
 for i in range(len(dados_bola)):
   tempo = float(dados_bola[i]['t'])
   bola['x'] = float(dados_bola[i]['x'])
   bola['y'] = float(dados_bola[i]['y'])
   robo = interceptar(robo, bola, tempo)
 
-  if robo['interceptado']  == True:
+  if robo['interceptado'] == True:
+    velocidade_bola(tempo)
+    aceleracao_bola(tempo)
     break
   else:
     pass
+
+
+
 
 grafico_trajetoria()
 grafico_posicao_x()
 grafico_posicao_y()
 grafico_velocidade()
+grafico_velocidade_bola()
 grafico_aceleracao()
+grafico_aceleracao_bola()
 grafico_distancia()
