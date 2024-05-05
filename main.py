@@ -104,7 +104,6 @@ def criar_arquivos(robo, bola, tempo):
 
 
 def velocidade_bola(tempo_total):
-  print(tempo_total)
   dados_bola = []
 
   dados_a = []
@@ -129,8 +128,8 @@ def velocidade_bola(tempo_total):
     xf = float(dados_bola[linha + 1]['x'])
     yf = float(dados_bola[linha + 1]['y'])
 
-    delta_x = xf - xi
-    delta_y = yf - yi
+    delta_x = float(xf - xi)
+    delta_y = float(yf - yi)
 
     velocidade_bola_x = delta_x / 0.2
     velocidade_bola_y = delta_y / 0.2
@@ -142,6 +141,44 @@ def velocidade_bola(tempo_total):
 
 
   velocidade_bola.close()
+
+def aceleracao_bola(tempo_total):
+  dados_bola = []
+
+  dados_a = []
+
+  velocidade_bola = open("velocidade_bola.txt", "r")
+
+  for linha in velocidade_bola.readlines():
+    dados_a.append(linha.strip().split('//'))
+    dados_bola.append({
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
+    })
+  velocidade_bola.close()
+
+  aceleracao_bola = open("aceleracao_bola.txt", "w")
+  for linha in range(len(dados_bola) -1): 
+    tempo = float(dados_bola[linha]['t'])
+    xi = float(dados_bola[linha]['x'])
+    yi = float(dados_bola[linha]['y'])
+
+    xf = float(dados_bola[linha + 1]['x'])
+    yf = float(dados_bola[linha + 1]['y'])
+
+    delta_x = xf - xi
+    delta_y = yf - yi
+
+    aceleracao_bola_x = delta_x / 0.2
+    aceleracao_bola_y = delta_y / 0.2
+
+    aceleracao_bola.write("%.2f//%.2f//%.2f\n" %(tempo, aceleracao_bola_x, aceleracao_bola_y))
+
+    if (tempo == tempo_total):
+      break
+  
+  aceleracao_bola.close()
 
 def limpar_arquivos():
   posicao = open("posicao.txt", "w")
@@ -359,6 +396,7 @@ for i in range(len(dados_bola)):
 
   if robo['interceptado'] == True:
     velocidade_bola(tempo)
+    aceleracao_bola(tempo)
     break
   else:
     pass
