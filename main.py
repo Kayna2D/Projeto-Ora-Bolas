@@ -264,18 +264,21 @@ def grafico_posicao_x():
   posicao = open("posicao.txt", "r")
   tempo = []
   x_robo = []
+  x_bola = []
 
   for linha in posicao:
     valores = linha.split("//")
     tempo.append(float(valores[0]))
     x_robo.append(float(valores[1]))
+    x_bola.append(float(valores[3]))
 
   plt.plot(tempo, x_robo)
+  plt.plot(tempo, x_bola)
 
-  plt.title("Gráfico da posição x do robô em função do tempo")
+  plt.title("Gráfico da posição x do robô e da bola em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("X (m)")
-  plt.legend(["Robô"])
+  plt.legend(["Robô", "Bola"])
 
   plt.savefig("grafico_posicao_x.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
@@ -284,18 +287,21 @@ def grafico_posicao_y():
   posicao = open("posicao.txt", "r")
   tempo = []
   y_robo = []
+  y_bola = []
 
   for linha in posicao:
     valores = linha.split("//")
     tempo.append(float(valores[0]))
     y_robo.append(float(valores[2]))
+    y_bola.append(float(valores[4]))
 
   plt.plot(tempo, y_robo)
+  plt.plot(tempo, y_bola)
 
-  plt.title("Gráfico da posição y do robô em função do tempo")
+  plt.title("Gráfico da posição y do robô e da bola em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("Y (m)")
-  plt.legend(["Robô"])
+  plt.legend(["Robô", "Bola"])
 
   plt.savefig("grafico_posicao_y.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
@@ -424,6 +430,27 @@ def grafico_distancia():
   plt.savefig("grafico_distancia.png", bbox_inches='tight', pad_inches=0, dpi=300)
   plt.close()
 
+def grafico_energia_cinetica():
+  energia_cinetica = open("energia_cinetica.txt", "r")
+  tempo = []
+  ec = []
+
+  for linha in energia_cinetica:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    ec.append(float(valores[1]))
+
+  plt.plot(tempo, ec)
+
+  plt.title("Gráfico da energia cinética do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Energia cinética (J)")
+
+  plt.savefig("grafico_energia_cinetica.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+  energia_cinetica.close()
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -518,3 +545,4 @@ grafico_velocidade_bola()
 grafico_aceleracao()
 grafico_aceleracao_bola()
 grafico_distancia()
+grafico_energia_cinetica()
