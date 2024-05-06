@@ -52,6 +52,8 @@ def interceptar(robo, bola, tempo):
     robo['vel'] += robo['acc'] * 0.2
   elif robo['vel'] > robo['vel_max']:
     robo['vel'] -= robo['acc'] * 0.2
+
+  robo['ecin'] = robo['peso']*(robo['vel']**2) / 2
   
 
   robo['vel_x'] = robo['vel'] * sin(angulo)
@@ -101,6 +103,10 @@ def criar_arquivos(robo, bola, tempo):
   distancia = open("distancia.txt", "a")
   distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
   distancia.close()
+
+  energia_cinetica = open("energia_cinetica.txt", "a")
+  energia_cinetica.write("%.2f//%.2f\n" %(tempo, robo['ecin']))
+  energia_cinetica.close()
 
 
 def velocidade_bola(tempo_total):
@@ -180,6 +186,40 @@ def aceleracao_bola(tempo_total):
   
   aceleracao_bola.close()
 
+def energia_cinetica_bola(tempo_total):
+  dados_bola = []
+
+  dados_a = []
+
+  velocidade_bola = open("velocidade_bola.txt", "r")
+
+  for linha in velocidade_bola.readlines():
+    dados_a.append(linha.strip().split('//'))
+    dados_bola.append({
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
+    })
+  velocidade_bola.close()
+
+  energia_cinetica_bola = open("energia_cinetica_bola.txt", "w")
+  for linha in range(len(dados_bola)):
+    tempo = float(dados_bola[linha]['t'])
+    vx = float(dados_bola[linha]['x'])
+    vy = float(dados_bola[linha]['y'])
+
+    velocidade_bola = sqrt(vx**2 + vy**2)
+    ecin = 0.05 * (velocidade_bola**2) / 2
+
+    energia_cinetica_bola.write("%.2f//%.2f\n" %(tempo, ecin))
+
+    if (tempo == tempo_total):
+      break  
+
+  energia_cinetica_bola.close()
+
+    
+
 def limpar_arquivos():
   posicao = open("posicao.txt", "w")
   posicao.close()
@@ -192,6 +232,9 @@ def limpar_arquivos():
 
   distancia = open("distancia.txt", "w")
   distancia.close()
+
+  energia_cinetica = open("energia_cinetica.txt", "w")
+  energia_cinetica.close()
 
 # Gráficos
 def grafico_trajetoria():
@@ -404,6 +447,7 @@ robo = {
   'x': robo_xi,
   'y': robo_yi,
   'raio': 0.09, #m
+  'peso': 2.8,
   'vel_max': 2.8,
   'vel': 0,
   'vel_x': 0,
@@ -411,6 +455,7 @@ robo = {
   'acc': 0,
   'acc_x': 0,
   'acc_y': 0,
+  'ecin': 0,
   'interceptado': False
 }
 
@@ -457,6 +502,7 @@ for i in range(len(dados_bola)):
   if robo['interceptado'] == True:
     velocidade_bola(tempo)
     aceleracao_bola(tempo)
+    energia_cinetica_bola(tempo)
     break
   else:
     pass
