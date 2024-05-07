@@ -3,7 +3,6 @@ from random import *
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
-import json
 
 def interceptar(robo, bola, tempo):
 
@@ -53,8 +52,8 @@ def interceptar(robo, bola, tempo):
   elif robo['vel'] > robo['vel_max']:
     robo['vel'] -= robo['acc'] * 0.2
 
+  robo['forca'] = robo['peso'] * robo['acc'] + robo['fat_cin']
   robo['ecin'] = robo['peso']*(robo['vel']**2) / 2
-  
 
   robo['vel_x'] = robo['vel'] * sin(angulo)
   robo['vel_y'] = robo['vel'] * cos(angulo)
@@ -82,6 +81,8 @@ def interceptar(robo, bola, tempo):
     print("Bola interceptada")
     print("Em: %.2fs" %tempo)
     print("Distancia: %.2f" %bola['distancia'])
+    print("Forcas no eixo y: %.2f - %.2f = 0" %(robo['forca_peso'], robo['normal']))
+    print("Forcas no eixo x: %.2f - %.2f = %.2f x %.2f" %(robo['forca'], robo['fat_cin'], robo['peso'], robo['acc']))
     robo['interceptado'] = True
     return robo
   else:
@@ -107,6 +108,10 @@ def criar_arquivos(robo, bola, tempo):
   energia_cinetica = open("energia_cinetica.txt", "a")
   energia_cinetica.write("%.2f//%.2f\n" %(tempo, robo['ecin']))
   energia_cinetica.close()
+
+  forca = open("forca.txt", "a")
+  forca.write("%.2f//%.2f\n" %(tempo, robo['forca']))
+  forca.close()
 
 
 def velocidade_bola(tempo_total):
@@ -235,6 +240,9 @@ def limpar_arquivos():
 
   energia_cinetica = open("energia_cinetica.txt", "w")
   energia_cinetica.close()
+
+  forca = open("forca.txt", "w")
+  forca.close()
 
 # Gráficos
 def grafico_trajetoria():
@@ -482,6 +490,11 @@ robo = {
   'acc': 0,
   'acc_x': 0,
   'acc_y': 0,
+  'forca_peso': 2.8 * 9.8,
+  'normal': 2.8 * 9.8,
+  'fat_est': (2.8 * 9.8) * 0.8,
+  'fat_cin': (2.8 * 9.8) * 0.6,
+  'forca': 0,
   'ecin': 0,
   'interceptado': False
 }
