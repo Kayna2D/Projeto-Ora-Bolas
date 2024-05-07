@@ -459,6 +459,27 @@ def grafico_energia_cinetica():
 
   energia_cinetica.close()
 
+def grafico_forca():
+  forca = open("forca.txt", "r")
+  tempo = []
+  f = []
+
+  for linha in forca:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    f.append(float(valores[1]))
+
+  plt.plot(tempo, f)
+
+  plt.title("Gráfico da força do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Força (N)")
+
+  plt.savefig("grafico_forca.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+  forca.close()
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -547,9 +568,6 @@ for i in range(len(dados_bola)):
   else:
     pass
 
-
-
-
 grafico_trajetoria()
 grafico_posicao_x()
 grafico_posicao_y()
@@ -559,3 +577,4 @@ grafico_aceleracao()
 grafico_aceleracao_bola()
 grafico_distancia()
 grafico_energia_cinetica()
+grafico_forca()
