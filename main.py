@@ -3,7 +3,6 @@ from random import *
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('TkAgg')
-import json
 
 def interceptar(robo, bola, tempo):
 
@@ -53,8 +52,8 @@ def interceptar(robo, bola, tempo):
   elif robo['vel'] > robo['vel_max']:
     robo['vel'] -= robo['acc'] * 0.2
 
+  robo['forca'] = robo['peso'] * robo['acc'] + robo['fat_cin']
   robo['ecin'] = robo['peso']*(robo['vel']**2) / 2
-  
 
   robo['vel_x'] = robo['vel'] * sin(angulo)
   robo['vel_y'] = robo['vel'] * cos(angulo)
@@ -82,6 +81,8 @@ def interceptar(robo, bola, tempo):
     print("Bola interceptada")
     print("Em: %.2fs" %tempo)
     print("Distancia: %.2f" %bola['distancia'])
+    print("Forcas no eixo y: %.2f - %.2f = 0" %(robo['forca_peso'], robo['normal']))
+    print("Forcas no eixo x: %.2f - %.2f = %.2f x %.2f" %(robo['forca'], robo['fat_cin'], robo['peso'], robo['acc']))
     robo['interceptado'] = True
     return robo
   else:
@@ -107,6 +108,10 @@ def criar_arquivos(robo, bola, tempo):
   energia_cinetica = open("energia_cinetica.txt", "a")
   energia_cinetica.write("%.2f//%.2f\n" %(tempo, robo['ecin']))
   energia_cinetica.close()
+
+  forca = open("forca.txt", "a")
+  forca.write("%.2f//%.2f\n" %(tempo, robo['forca']))
+  forca.close()
 
 
 def velocidade_bola(tempo_total):
@@ -235,6 +240,9 @@ def limpar_arquivos():
 
   energia_cinetica = open("energia_cinetica.txt", "w")
   energia_cinetica.close()
+
+  forca = open("forca.txt", "w")
+  forca.close()
 
 # Gráficos
 def grafico_trajetoria():
@@ -451,6 +459,27 @@ def grafico_energia_cinetica():
 
   energia_cinetica.close()
 
+def grafico_forca():
+  forca = open("forca.txt", "r")
+  tempo = []
+  f = []
+
+  for linha in forca:
+    valores = linha.split("//")
+    tempo.append(float(valores[0]))
+    f.append(float(valores[1]))
+
+  plt.plot(tempo, f)
+
+  plt.title("Gráfico da força do robô em função do tempo")
+  plt.xlabel("Tempo (s)")
+  plt.ylabel("Força (N)")
+
+  plt.savefig("grafico_forca.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.close()
+
+  forca.close()
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -482,6 +511,11 @@ robo = {
   'acc': 0,
   'acc_x': 0,
   'acc_y': 0,
+  'forca_peso': 2.8 * 9.8,
+  'normal': 2.8 * 9.8,
+  'fat_est': (2.8 * 9.8) * 0.8,
+  'fat_cin': (2.8 * 9.8) * 0.6,
+  'forca': 0,
   'ecin': 0,
   'interceptado': False
 }
@@ -534,9 +568,6 @@ for i in range(len(dados_bola)):
   else:
     pass
 
-
-
-
 grafico_trajetoria()
 grafico_posicao_x()
 grafico_posicao_y()
@@ -546,3 +577,4 @@ grafico_aceleracao()
 grafico_aceleracao_bola()
 grafico_distancia()
 grafico_energia_cinetica()
+grafico_forca()
