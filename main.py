@@ -2,58 +2,49 @@ from math import *
 from random import *
 import matplotlib
 import matplotlib.pyplot as plt
+
 matplotlib.use('TkAgg')
+
 
 def interceptar(robo, bola, tempo):
 
   if (bola['y'] - robo['y']) == 0:
     tend = 0.00000000000000001
-    mod_tan = sqrt(((bola['x'] - robo['x'])/(tend))**2)
+    mod_tan = sqrt(((bola['x'] - robo['x']) / (tend))**2)
   else:
-    mod_tan = sqrt(((bola['x'] - robo['x'])/(bola['y'] - robo['y']))**2)
+    mod_tan = sqrt(((bola['x'] - robo['x']) / (bola['y'] - robo['y']))**2)
 
   angulo = atan(mod_tan)
 
-  bola['distancia'] = sqrt((bola['x'] - robo['x'])**2 + (bola['y'] - robo['y'])**2)
+  bola['distancia'] = sqrt((bola['x'] - robo['x'])**2 +
+                           (bola['y'] - robo['y'])**2)
 
   if bola['distancia'] >= 2.8:
     robo['vel_max'] = 2.8
     robo['acc'] = 2.8
-  elif (bola['distancia'] >= 2.5) and (bola['distancia'] < 2.8):
-    robo['vel_max'] = 2.5
-    robo['acc'] = 1.25
-  elif (bola['distancia'] >= 2.2) and (bola['distancia'] < 2.5):
-    robo['vel_max'] = 2.2
-    robo['acc'] = 1.1
-  elif (bola['distancia'] >= 1.9) and (bola['distancia'] < 2.2):
-    robo['vel_max'] = 1.9
-    robo['acc'] = 0.95
-  elif (bola['distancia'] >= 1.6) and (bola['distancia'] < 1.9):
-    robo['vel_max'] = 1.6
-    robo['acc'] = 0.8
-  elif (bola['distancia'] >= 1.3) and (bola['distancia'] < 1.6):
-    robo['vel_max'] = 1.3
-    robo['acc'] = 0.65
-  elif (bola['distancia'] >= 1.0) and (bola['distancia'] < 1.3):
-    robo['vel_max'] = 1.0
+  elif (bola['distancia'] >= 1.4) and (bola['distancia'] < 2.8):
+    robo['vel_max'] = 1.4
+    robo['acc'] = 0.7
+  elif (bola['distancia'] >= 1) and (bola['distancia'] < 1.4):
+    robo['vel_max'] = 1
     robo['acc'] = 0.5
-  elif (bola['distancia'] >= 0.7) and (bola['distancia'] < 1.0):
-    robo['vel_max'] = 0.7
-    robo['acc'] = 0.35
-  elif (bola['distancia'] >= 0.4) and (bola['distancia'] < 0.7):
-    robo['vel_max'] = 0.4
-    robo['acc'] = 0.2
-  elif (bola['distancia'] >= 0.1) and (bola['distancia'] < 0.4):
+  elif (bola['distancia'] >= 0.5) and (bola['distancia'] < 1):
+    robo['vel_max'] = 0.5
+    robo['acc'] = 0.25
+  elif (bola['distancia'] >= 0.25 and bola['distancia'] < 0.5):
+    robo['vel_max'] = 0.25
+    robo['acc'] = 0.125
+  elif (bola['distancia'] >= 0.1) and (bola['distancia'] < 0.125):
     robo['vel_max'] = 0.1
     robo['acc'] = 0.05
 
   if robo['vel'] < robo['vel_max']:
-    robo['vel'] += robo['acc'] * 0.2
+    robo['vel'] += robo['acc'] * 0.02
   elif robo['vel'] > robo['vel_max']:
-    robo['vel'] -= robo['acc'] * 0.2
+    robo['vel'] -= robo['acc'] * 0.02
 
   robo['forca'] = robo['peso'] * robo['acc'] + robo['fat_cin']
-  robo['ecin'] = robo['peso']*(robo['vel']**2) / 2
+  robo['ecin'] = robo['peso'] * (robo['vel']**2) / 2
 
   robo['vel_x'] = robo['vel'] * sin(angulo)
   robo['vel_y'] = robo['vel'] * cos(angulo)
@@ -79,38 +70,44 @@ def interceptar(robo, bola, tempo):
 
   if (bola['distancia'] <= robo['raio']):
     print("Bola interceptada")
-    print("Em: %.2fs" %tempo)
-    print("Distancia: %.2f" %bola['distancia'])
-    print("Forcas no eixo y: %.2f - %.2f = 0" %(robo['forca_peso'], robo['normal']))
-    print("Forcas no eixo x: %.2f - %.2f = %.2f x %.2f" %(robo['forca'], robo['fat_cin'], robo['peso'], robo['acc']))
+    print("Em: %.2fs" % tempo)
+    print("Distancia: %.2f" % bola['distancia'])
+    print("Forcas no eixo y: %.2f - %.2f = 0" %
+          (robo['forca_peso'], robo['normal']))
+    print("Forcas no eixo x: %.2f - %.2f = %.2f x %.2f" %
+          (robo['forca'], robo['fat_cin'], robo['peso'], robo['acc']))
     robo['interceptado'] = True
     return robo
   else:
     return robo
-    
+
+
 def criar_arquivos(robo, bola, tempo):
   posicao = open("posicao.txt", "a")
-  posicao.write("%.2f//%.2f//%.2f//%.2f//%.2f\n" %(tempo, robo['x'], robo['y'], bola['x'], bola['y']))
+  posicao.write("%.2f//%.2f//%.2f//%.2f//%.2f\n" %
+                (tempo, robo['x'], robo['y'], bola['x'], bola['y']))
   posicao.close()
 
   velocidades = open("velocidades.txt", "a")
-  velocidades.write("%.2f//%.2f//%.2f\n" %(tempo, robo['vel_x'], robo['vel_y']))
+  velocidades.write("%.2f//%.2f//%.2f\n" %
+                    (tempo, robo['vel_x'], robo['vel_y']))
   velocidades.close()
 
   aceleracoes = open("aceleracoes.txt", "a")
-  aceleracoes.write("%.2f//%.2f//%.2f\n" %(tempo, robo['acc_x'], robo['acc_y']))
+  aceleracoes.write("%.2f//%.2f//%.2f\n" %
+                    (tempo, robo['acc_x'], robo['acc_y']))
   aceleracoes.close()
 
   distancia = open("distancia.txt", "a")
-  distancia.write("%.2f//%.2f\n" %(tempo, bola['distancia']))
+  distancia.write("%.2f//%.2f\n" % (tempo, bola['distancia']))
   distancia.close()
 
   energia_cinetica = open("energia_cinetica.txt", "a")
-  energia_cinetica.write("%.2f//%.2f\n" %(tempo, robo['ecin']))
+  energia_cinetica.write("%.2f//%.2f\n" % (tempo, robo['ecin']))
   energia_cinetica.close()
 
   forca = open("forca.txt", "a")
-  forca.write("%.2f//%.2f\n" %(tempo, robo['forca']))
+  forca.write("%.2f//%.2f\n" % (tempo, robo['forca']))
   forca.close()
 
 
@@ -124,14 +121,14 @@ def velocidade_bola(tempo_total):
   for linha in trajetoria_bola.readlines():
     dados_a.append(linha.strip().split('//'))
     dados_bola.append({
-      't': linha.strip().split('//')[0],
-      'x': linha.strip().split('//')[1],
-      'y': linha.strip().split('//')[2],
+        't': linha.strip().split('//')[0],
+        'x': linha.strip().split('//')[1],
+        'y': linha.strip().split('//')[2],
     })
   trajetoria_bola.close()
 
   velocidade_bola = open("velocidade_bola.txt", "w")
-  for linha in range(len(dados_bola)): 
+  for linha in range(len(dados_bola)):
     tempo = float(dados_bola[linha]['t'])
     xi = float(dados_bola[linha]['x'])
     yi = float(dados_bola[linha]['y'])
@@ -145,13 +142,14 @@ def velocidade_bola(tempo_total):
     velocidade_bola_x = delta_x / 0.2
     velocidade_bola_y = delta_y / 0.2
 
-    velocidade_bola.write("%.2f//%.2f//%.2f\n" %(tempo, velocidade_bola_x, velocidade_bola_y))
+    velocidade_bola.write("%.2f//%.2f//%.2f\n" %
+                          (tempo, velocidade_bola_x, velocidade_bola_y))
 
     if (tempo == tempo_total):
       break
 
-
   velocidade_bola.close()
+
 
 def aceleracao_bola(tempo_total):
   dados_bola = []
@@ -163,14 +161,14 @@ def aceleracao_bola(tempo_total):
   for linha in velocidade_bola.readlines():
     dados_a.append(linha.strip().split('//'))
     dados_bola.append({
-      't': linha.strip().split('//')[0],
-      'x': linha.strip().split('//')[1],
-      'y': linha.strip().split('//')[2],
+        't': linha.strip().split('//')[0],
+        'x': linha.strip().split('//')[1],
+        'y': linha.strip().split('//')[2],
     })
   velocidade_bola.close()
 
   aceleracao_bola = open("aceleracao_bola.txt", "w")
-  for linha in range(len(dados_bola) -1): 
+  for linha in range(len(dados_bola) - 1):
     tempo = float(dados_bola[linha]['t'])
     xi = float(dados_bola[linha]['x'])
     yi = float(dados_bola[linha]['y'])
@@ -184,12 +182,14 @@ def aceleracao_bola(tempo_total):
     aceleracao_bola_x = delta_x / 0.2
     aceleracao_bola_y = delta_y / 0.2
 
-    aceleracao_bola.write("%.2f//%.2f//%.2f\n" %(tempo, aceleracao_bola_x, aceleracao_bola_y))
+    aceleracao_bola.write("%.2f//%.2f//%.2f\n" %
+                          (tempo, aceleracao_bola_x, aceleracao_bola_y))
 
     if (tempo == tempo_total):
       break
-  
+
   aceleracao_bola.close()
+
 
 def energia_cinetica_bola(tempo_total):
   dados_bola = []
@@ -201,9 +201,9 @@ def energia_cinetica_bola(tempo_total):
   for linha in velocidade_bola.readlines():
     dados_a.append(linha.strip().split('//'))
     dados_bola.append({
-      't': linha.strip().split('//')[0],
-      'x': linha.strip().split('//')[1],
-      'y': linha.strip().split('//')[2],
+        't': linha.strip().split('//')[0],
+        'x': linha.strip().split('//')[1],
+        'y': linha.strip().split('//')[2],
     })
   velocidade_bola.close()
 
@@ -216,14 +216,13 @@ def energia_cinetica_bola(tempo_total):
     velocidade_bola = sqrt(vx**2 + vy**2)
     ecin = 0.05 * (velocidade_bola**2) / 2
 
-    energia_cinetica_bola.write("%.2f//%.2f\n" %(tempo, ecin))
+    energia_cinetica_bola.write("%.2f//%.2f\n" % (tempo, ecin))
 
     if (tempo == tempo_total):
-      break  
+      break
 
   energia_cinetica_bola.close()
 
-    
 
 def limpar_arquivos():
   posicao = open("posicao.txt", "w")
@@ -244,6 +243,7 @@ def limpar_arquivos():
   forca = open("forca.txt", "w")
   forca.close()
 
+
 # Gráficos
 def grafico_trajetoria():
   posicao = open("posicao.txt", "r")
@@ -259,14 +259,18 @@ def grafico_trajetoria():
     y_bola.append(float(valores[4]))
   plt.plot(x_robo, y_robo)
   plt.plot(x_bola, y_bola)
-  
+
   plt.title("Gráfico das trajetórias da bola e do robo até a interceptação")
   plt.xlabel("X (m)")
   plt.ylabel("Y (m)")
   plt.legend(["Robô", "Bola"])
 
-  plt.savefig("grafico_trajetoria.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_trajetoria.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
+
 
 def grafico_posicao_x():
   posicao = open("posicao.txt", "r")
@@ -288,8 +292,12 @@ def grafico_posicao_x():
   plt.ylabel("X (m)")
   plt.legend(["Robô", "Bola"])
 
-  plt.savefig("grafico_posicao_x.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_posicao_x.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
+
 
 def grafico_posicao_y():
   posicao = open("posicao.txt", "r")
@@ -311,8 +319,12 @@ def grafico_posicao_y():
   plt.ylabel("Y (m)")
   plt.legend(["Robô", "Bola"])
 
-  plt.savefig("grafico_posicao_y.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_posicao_y.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
+
 
 def grafico_velocidade():
   velocidades = open("velocidades.txt", "r")
@@ -334,10 +346,14 @@ def grafico_velocidade():
   plt.ylabel("Velocidade (m/s)")
   plt.legend(["Vx", "Vy"])
 
-  plt.savefig("grafico_velocidade.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_velocidade.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
 
   velocidades.close()
+
 
 def grafico_velocidade_bola():
   velocidade_bola = open("velocidade_bola.txt", "r")
@@ -359,11 +375,15 @@ def grafico_velocidade_bola():
   plt.ylabel("Velocidade (m/s)")
   plt.legend(["Vx", "Vy"])
 
-  plt.savefig("grafico_velocidade_bola.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_velocidade_bola.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
 
   velocidade_bola.close()
 
   plt.close()
+
 
 def grafico_aceleracao():
   aceleracoes = open("aceleracoes.txt", "r")
@@ -386,10 +406,14 @@ def grafico_aceleracao():
   plt.ylabel("Aceleração (m/s²)")
   plt.legend(["Ax", "Ay"])
 
-  plt.savefig("grafico_aceleracao.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_aceleracao.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
 
   aceleracoes.close()
+
 
 def grafico_aceleracao_bola():
   aceleracao_bola = open("aceleracao_bola.txt", "r")
@@ -412,11 +436,15 @@ def grafico_aceleracao_bola():
   plt.ylabel("Aceleração (m/s²)")
   plt.legend(["Ax", "Ay"])
 
-  plt.savefig("grafico_aceleracao_bola.png", bbox_inches='tight', pad_inches=0, dpi=300)
-  
+  plt.savefig("grafico_aceleracao_bola.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
+
   aceleracao_bola.close()
 
   plt.close()
+
 
 def grafico_distancia():
   distancia = open("distancia.txt", "r")
@@ -430,13 +458,17 @@ def grafico_distancia():
 
   plt.plot(tempo, dist)
 
-  plt.title("Gráfico da distância relativa entre o robô e a bola em função do tempo")
+  plt.title(
+      "Gráfico da distância relativa entre o robô e a bola em função do tempo")
   plt.xlabel("Tempo (s)")
   plt.ylabel("Distância (m)")
 
-
-  plt.savefig("grafico_distancia.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_distancia.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
+
 
 def grafico_energia_cinetica():
   energia_cinetica = open("energia_cinetica.txt", "r")
@@ -454,10 +486,14 @@ def grafico_energia_cinetica():
   plt.xlabel("Tempo (s)")
   plt.ylabel("Energia cinética (J)")
 
-  plt.savefig("grafico_energia_cinetica.png", bbox_inches='tight', pad_inches=0, dpi=300)
+  plt.savefig("grafico_energia_cinetica.png",
+              bbox_inches='tight',
+              pad_inches=0,
+              dpi=300)
   plt.close()
 
   energia_cinetica.close()
+
 
 def grafico_forca():
   forca = open("forca.txt", "r")
@@ -480,6 +516,7 @@ def grafico_forca():
 
   forca.close()
 
+
 limpar_arquivos()
 
 robo_xi_max = int(2 * 100)
@@ -488,7 +525,7 @@ robo_xi_min = 0
 robo_yi_max = int(1.5 * 100)
 robo_yi_min = int(-0.5 * 100)
 
-while(True):
+while (True):
   robo_xi = randint(robo_xi_min, robo_xi_max) / 100
   robo_yi = randint(robo_yi_min, robo_yi_max) / 100
   dist_i = sqrt((robo_xi - 1)**2 + (robo_yi - 0.5)**2)
@@ -497,36 +534,28 @@ while(True):
   else:
     continue
 
-
-
 robo = {
-  'x': robo_xi,
-  'y': robo_yi,
-  'raio': 0.09, #m
-  'peso': 2.8,
-  'vel_max': 2.8,
-  'vel': 0,
-  'vel_x': 0,
-  'vel_y': 0,
-  'acc': 0,
-  'acc_x': 0,
-  'acc_y': 0,
-  'forca_peso': 2.8 * 9.8,
-  'normal': 2.8 * 9.8,
-  'fat_est': (2.8 * 9.8) * 0.8,
-  'fat_cin': (2.8 * 9.8) * 0.6,
-  'forca': 0,
-  'ecin': 0,
-  'interceptado': False
+    'x': robo_xi, #1.02,
+    'y': robo_yi, #0.20,
+    'raio': 0.09,  #m
+    'peso': 2.8,
+    'vel_max': 2.8,
+    'vel': 0,
+    'vel_x': 0,
+    'vel_y': 0,
+    'acc': 0,
+    'acc_x': 0,
+    'acc_y': 0,
+    'forca_peso': 2.8 * 9.8,
+    'normal': 2.8 * 9.8,
+    'fat_est': (2.8 * 9.8) * 0.8,
+    'fat_cin': (2.8 * 9.8) * 0.6,
+    'forca': 0,
+    'ecin': 0,
+    'interceptado': False
 }
 
-bola = {
-  'x': 1,
-  'y': 0.5,
-  'distancia': dist_i
-}
-
-
+bola = {'x': 1, 'y': 0.5, 'distancia': dist_i}
 
 dados_bola = []
 
@@ -537,9 +566,9 @@ trajetoria_bola = open("trajetoria_bola.txt", "r")
 for linha in trajetoria_bola.readlines():
   dados_a.append(linha.strip().split('//'))
   dados_bola.append({
-    't': linha.strip().split('//')[0],
-    'x': linha.strip().split('//')[1],
-    'y': linha.strip().split('//')[2],
+      't': linha.strip().split('//')[0],
+      'x': linha.strip().split('//')[1],
+      'y': linha.strip().split('//')[2],
   })
 
 trajetoria_bola.close()
@@ -552,7 +581,6 @@ trajetoria_bola.close()
     'x': dados_a[i][1],
     'y': dados_a[i][2],
   } """
-
 
 for i in range(len(dados_bola)):
   tempo = float(dados_bola[i]['t'])
